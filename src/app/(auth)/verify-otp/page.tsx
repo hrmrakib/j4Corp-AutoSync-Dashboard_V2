@@ -1,4 +1,5 @@
 "use client";
+
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useVerifyFogotPassOtpMutation } from "@/redux/features/auth/authAPI";
 
 export default function VerifyAccountPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -14,6 +16,7 @@ export default function VerifyAccountPage() {
   const [isResending, setIsResending] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+  const [verifyFogotPassOtpMutation] = useVerifyFogotPassOtpMutation();
 
   useEffect(() => {
     // Focus on first input when component mounts
@@ -78,17 +81,23 @@ export default function VerifyAccountPage() {
     setError("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Execute the API call with the requested body structure
+      const response = await verifyFogotPassOtpMutation({
+        otp: otpCode,
+      }).unwrap();
 
-      // For demo purposes, accept any 6-digit code
-      console.log("[v0] OTP verification attempted:", otpCode);
+      // Check if access_token exists in the response and save to localStorage
+      if (response?.data?.access_token) {
+        localStorage.setItem("accessToken", response.data.access_token);
+      }
 
-      // Redirect to success page or dashboard
-      router.push("/auth/signin?verified=true");
-    } catch (error) {
-      setError("Invalid verification code. Please try again.");
-      console.log(error);
+      // Redirect to the reset-password page
+      router.push(`/reset-password`);
+    } catch (err: any) {
+      console.error("OTP Verification Error:", err);
+      setError(
+        err?.data?.message || "Invalid verification code. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -99,16 +108,17 @@ export default function VerifyAccountPage() {
     setError("");
 
     try {
-      // Simulate API call
+      // Note: In a real app, you would dispatch your resend OTP mutation here
+      // (likely using the email parameter from the URL).
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("[v0] Resend OTP requested");
+      console.log("Resend OTP requested");
 
       // Clear current OTP and focus first input
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
-    } catch (error) {
+    } catch (err: any) {
+      console.error("Resend OTP Error:", err);
       setError("Failed to resend code. Please try again.");
-      console.log(error);
     } finally {
       setIsResending(false);
     }
@@ -121,14 +131,14 @@ export default function VerifyAccountPage() {
         <div className='bg-white rounded-2xl shadow-lg p-8 relative'>
           {/* Back Button */}
           <Link
-            href='/auth/forgot-password'
+            href='/forgot-password'
             className='absolute top-6 left-6 p-2 hover:bg-gray-100 rounded-full transition-colors'
           >
             <ArrowLeft className='w-5 h-5 text-gray-600' />
           </Link>
 
           {/* Header */}
-          <div className='text-center mb-8'>
+          <div className='text-center mb-8 mt-4'>
             <h1 className='text-2xl font-bold text-gray-900 mb-3'>
               Verify Your Account
             </h1>
@@ -158,14 +168,16 @@ export default function VerifyAccountPage() {
 
             {/* Error Message */}
             {error && (
-              <p className='text-red-500 text-sm text-center'>{error}</p>
+              <p className='text-red-500 text-sm text-center bg-red-50 p-2 rounded-md border border-red-200'>
+                {error}
+              </p>
             )}
 
             {/* Verification Button */}
             <Button
               type='submit'
               disabled={isLoading}
-              className='w-full bg-[#030712] hover:bg-[#030712] text-white py-3 rounded-xl font-medium transition-colors'
+              className='w-full bg-[#030712] hover:bg-[#030712]/90 text-white py-3 rounded-xl font-medium transition-colors'
             >
               {isLoading ? "Verifying..." : "Verify"}
             </Button>
@@ -173,15 +185,15 @@ export default function VerifyAccountPage() {
             {/* Resend Code */}
             <div className='text-center'>
               <span className='text-gray-600 text-sm'>
-                Don&apos;t received code?{" "}
+                Didn't receive code?{" "}
               </span>
               <button
                 type='button'
                 onClick={handleResendCode}
                 disabled={isResending}
-                className='text-[#030712] text-sm font-medium hover:text-[#030712] transition-colors disabled:opacity-50'
+                className='text-[#030712] text-sm font-medium hover:text-gray-600 transition-colors disabled:opacity-50'
               >
-                {isResending ? "Sending..." : "Resent Now"}
+                {isResending ? "Sending..." : "Resend Now"}
               </button>
             </div>
           </form>

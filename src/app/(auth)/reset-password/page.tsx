@@ -1,13 +1,13 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useResetPasswordMutation } from "@/redux/features/auth/authAPI";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -19,14 +19,15 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [resetPasswordMutation] = useResetPasswordMutation();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8 || formData.password.length > 10) {
-      newErrors.password = "Password must be 8-10 characters long";
+    } else if (formData.password.length < 6 || formData.password.length > 10) {
+      newErrors.password = "Password must be 6-10 characters long";
     }
 
     if (!formData.confirmPassword) {
@@ -45,15 +46,26 @@ export default function ResetPasswordPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setErrors({}); // Clear previous errors
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Execute the API call with the required body structure
+      await resetPasswordMutation({
+        new_password: formData.password,
+        confirm_password: formData.confirmPassword,
+      }).unwrap();
 
-      // Redirect to sign in page after successful password reset
-      router.push("/auth/signin");
-    } catch (error) {
+      // Clean up the temporary access token used for resetting
+      localStorage.removeItem("accessToken");
+
+      // Redirect to password success page
+      router.push("/password-success");
+    } catch (error: any) {
       console.error("Password reset failed:", error);
+      setErrors({
+        form:
+          error?.data?.message || "Failed to reset password. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -61,8 +73,13 @@ export default function ResetPasswordPage() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
+    if (errors[field] || errors.form) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        delete newErrors.form;
+        return newErrors;
+      });
     }
   };
 
@@ -80,7 +97,7 @@ export default function ResetPasswordPage() {
         </button>
 
         {/* Header */}
-        <div className='text-center mb-8'>
+        <div className='text-center mb-8 mt-4'>
           <h1 className='text-2xl font-bold text-gray-900 mb-2'>
             Reset Password
           </h1>
@@ -88,6 +105,13 @@ export default function ResetPasswordPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className='space-y-6'>
+          {/* General API Error Message */}
+          {errors.form && (
+            <div className='p-3 text-sm text-red-500 bg-red-50 rounded-md border border-red-200'>
+              {errors.form}
+            </div>
+          )}
+
           {/* Password Field */}
           <div className='space-y-2'>
             <Label
@@ -170,7 +194,7 @@ export default function ResetPasswordPage() {
           <Button
             type='submit'
             disabled={isLoading}
-            className='w-full h-12 bg-[#030712] hover:bg-[#030712] text-white font-medium rounded-lg transition-colors'
+            className='w-full h-12 bg-[#030712] hover:bg-[#030712]/90 text-white font-medium rounded-lg transition-colors'
           >
             {isLoading ? "Resetting Password..." : "Reset Password"}
           </Button>

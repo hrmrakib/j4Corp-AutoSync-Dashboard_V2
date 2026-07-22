@@ -1,19 +1,20 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForgotPasswordMutation } from "@/redux/features/auth/authAPI";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; form?: string }>({});
   const router = useRouter();
+  const [forgotPasswordMutation] = useForgotPasswordMutation();
 
   const validateForm = () => {
     const newErrors: { email?: string } = {};
@@ -34,19 +35,21 @@ export default function ForgotPasswordPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setErrors({}); // Clear previous errors
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Execute the mutation with the exact body format: { "email": "user@example.com" }
+      await forgotPasswordMutation({ email }).unwrap();
 
-      // In a real app, you would send the reset email here
-      console.log("Password reset email sent to:", email);
-
-      // Redirect to a success page or show success message
-      alert("Password reset link has been sent to your email!");
-    } catch (error) {
+      // Redirect to verify-otp page and pass the email via query parameter
+      router.push(`/verify-otp?email=${encodeURIComponent(email)}`);
+    } catch (error: any) {
       console.error("Error sending reset email:", error);
-      setErrors({ email: "Failed to send reset email. Please try again." });
+      setErrors({
+        form:
+          error?.data?.message ||
+          "Failed to send reset email. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +59,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen bg-[url('/authBg.jpg')] bg-cover bg-center bg-no-repeat flex items-center justify-center">
       <div className='absolute inset-0 top-0 left-0 w-full h-full bg-black opacity-30'></div>
 
-      <div className='w-full max-w-md'>
+      <div className='w-full max-w-md relative'>
         <div className='bg-white rounded-2xl shadow-lg p-8 relative'>
           {/* Back Button */}
           <button
@@ -67,7 +70,7 @@ export default function ForgotPasswordPage() {
           </button>
 
           {/* Header */}
-          <div className='text-center mb-8'>
+          <div className='text-center mb-8 mt-4'>
             <h1 className='text-2xl font-bold text-[#030712] mb-2'>
               Forget Password
             </h1>
@@ -78,6 +81,13 @@ export default function ForgotPasswordPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className='space-y-6'>
+            {/* General API Error Message */}
+            {errors.form && (
+              <div className='p-3 text-sm text-red-500 bg-red-50 rounded-md border border-red-200'>
+                {errors.form}
+              </div>
+            )}
+
             {/* Email Field */}
             <div>
               <label
@@ -94,8 +104,8 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setEmail(e.target.value);
-                    if (errors.email) {
-                      setErrors({ ...errors, email: undefined });
+                    if (errors.email || errors.form) {
+                      setErrors({});
                     }
                   }}
                   placeholder='Enter your email'
@@ -115,7 +125,7 @@ export default function ForgotPasswordPage() {
             {/* Submit Button */}
             <Button
               type='submit'
-              className='w-full h-12 bg-[#030712] hover:bg-[#030712] text-white font-medium rounded-lg transition-colors'
+              className='w-full h-12 bg-[#030712] hover:bg-[#030712]/90 text-white font-medium rounded-lg transition-colors'
               disabled={isLoading}
             >
               {isLoading ? "Sending..." : "Send OTP"}
@@ -128,7 +138,7 @@ export default function ForgotPasswordPage() {
               Already have an account?{" "}
               <Link
                 href='/signin'
-                className='text-[#030712] hover:text-[#030712] font-medium transition-colors'
+                className='text-[#030712] hover:text-gray-600 font-bold transition-colors'
               >
                 Sign in
               </Link>

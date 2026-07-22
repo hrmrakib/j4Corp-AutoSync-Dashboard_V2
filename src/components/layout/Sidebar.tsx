@@ -16,6 +16,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useEffect, useRef } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { LogoutModal } from "@/components/layout/LogoutModal";
+import toast from "react-hot-toast";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -28,8 +29,8 @@ export function Sidebar() {
   const handleLogout = () => {
     // In a real app, clear tokens, auth state, etc.
     setIsLogoutModalOpen(false);
-    alert("Logged out successfully");
-    // router.push("/login");
+    toast.success("Logged out successfully");
+    router.push("/login");
   };
 
   // Close sidebar when clicking outside on mobile
@@ -72,8 +73,8 @@ export function Sidebar() {
       {/* Mobile backdrop overlay */}
       {isOpen && !isDesktop && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-fade-in lg:hidden"
-          aria-hidden="true"
+          className='fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-fade-in lg:hidden'
+          aria-hidden='true'
         />
       )}
 
@@ -86,29 +87,29 @@ export function Sidebar() {
           lg:sticky lg:translate-x-0
           ${isOpen || isDesktop ? "translate-x-0" : "-translate-x-full"}
         `}
-        aria-label="Main navigation"
+        aria-label='Main navigation'
       >
         {/* Mobile close button */}
-        <div className="flex items-center justify-end p-4 lg:hidden">
+        <div className='flex items-center justify-end p-4 lg:hidden'>
           <button
             onClick={close}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-sidebar-text hover:text-white transition-colors"
-            aria-label="Close menu"
+            className='flex h-8 w-8 items-center justify-center rounded-full text-sidebar-text hover:text-white transition-colors'
+            aria-label='Close menu'
           >
-            <CloseIcon className="h-5 w-5" />
+            <CloseIcon className='h-5 w-5' />
           </button>
         </div>
 
         {/* Logo / Brand area */}
-        <div className="px-6 py-6 lg:pt-8">
-          <h1 className="text-xl font-bold text-white tracking-tight">
+        <div className='px-6 py-6 lg:pt-8'>
+          <h1 className='text-xl font-bold text-white tracking-tight'>
             J4Crop
           </h1>
-          <p className="text-xs text-sidebar-text mt-0.5">AutoSync Dashboard</p>
+          <p className='text-xs text-sidebar-text mt-0.5'>AutoSync Dashboard</p>
         </div>
 
         {/* Navigation items */}
-        <nav className="flex-1 px-4 space-y-1">
+        <nav className='flex-1 px-4 space-y-1'>
           {sidebarItems.map((item) => {
             const Icon = iconMap[item.iconName];
             const active = isActive(item.href);
@@ -144,21 +145,21 @@ export function Sidebar() {
         </nav>
 
         {/* Logout button */}
-        <div className="px-4 pb-6">
+        <div className='px-4 pb-6'>
           <button
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-logout transition-all duration-200 hover:bg-red-500/10"
+            className='flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-logout transition-all duration-200 hover:bg-red-500/10'
             onClick={() => setIsLogoutModalOpen(true)}
           >
-            <LogoutIcon className="h-5 w-5 shrink-0" />
+            <LogoutIcon className='h-5 w-5 shrink-0' />
             <span>Log Out</span>
           </button>
         </div>
       </aside>
 
-      <LogoutModal 
-        isOpen={isLogoutModalOpen} 
-        onClose={() => setIsLogoutModalOpen(false)} 
-        onConfirm={handleLogout} 
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
       />
     </>
   );

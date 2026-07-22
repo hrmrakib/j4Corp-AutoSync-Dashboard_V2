@@ -2,9 +2,9 @@ import baseAPI from "@/redux/api/api";
 
 const AuthenticationAPI = baseAPI.injectEndpoints({
   endpoints: (builder) => ({
-    verifyOtp: builder.mutation({
+    verifyFogotPassOtp: builder.mutation({
       query: (body) => ({
-        url: "/auth/otp-verify",
+        url: "/account/verify-forget-password-otp/",
         method: "POST",
         body,
       }),
@@ -20,7 +20,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     forgotPassword: builder.mutation({
       query: (body) => ({
-        url: "/auth/forget-password",
+        url: "/account/forget-password/",
         method: "POST",
         body,
       }),
@@ -28,7 +28,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 
     resetPassword: builder.mutation({
       query: (body) => ({
-        url: "/auth/reset-password",
+        url: "/account/reset-password/",
         method: "POST",
         body,
       }),
@@ -45,7 +45,7 @@ const AuthenticationAPI = baseAPI.injectEndpoints({
 });
 
 export const {
-  useVerifyOtpMutation,
+  useVerifyFogotPassOtpMutation,
   useResendOtpMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
