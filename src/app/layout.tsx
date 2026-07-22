@@ -5,8 +5,9 @@ import { ToastProvider } from "@/context/ToastContext";
 import { SidebarProvider } from "@/context/SidebarContext";
 import { ToastContainer } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
+import Providers from "@/redux/features/Providers";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,14 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", inter.variable, "font-sans", geist.variable)}>
-      <body className="min-h-full font-sans antialiased">
-        <SidebarProvider>
-          <ToastProvider>
-            {children}
-            <ToastContainer />
-          </ToastProvider>
-        </SidebarProvider>
+    <html
+      lang='en'
+      className={cn("h-full", inter.variable, "font-sans", geist.variable)}
+    >
+      <body className='min-h-full font-sans antialiased'>
+        <Providers>
+          <SidebarProvider>
+            <ToastProvider>
+              {children}
+              <ToastContainer />
+            </ToastProvider>
+          </SidebarProvider>
+        </Providers>
       </body>
     </html>
   );

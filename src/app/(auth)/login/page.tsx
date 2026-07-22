@@ -1,16 +1,22 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+// Adjust the import path to match where your authSlice is located
+import { setUser } from "@/redux/features/auth/authSlice";
 
 export default function SignInPage() {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,6 +30,9 @@ export default function SignInPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+    if (errors.form) {
+      setErrors((prev) => ({ ...prev, form: "" }));
     }
   };
 
@@ -50,12 +59,48 @@ export default function SignInPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setErrors({});
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log("Sign in data:", formData);
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL || "https://api.jm.j4corp.net/v1";
+
+      const response = await fetch(`${apiUrl}/account/login/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Destructure tokens from the user data to match your TUser type
+        const { tokens, ...userData } = result.data;
+
+        // 1. Set tokens to localStorage
+        localStorage.setItem("accessToken", tokens.access);
+        localStorage.setItem("refreshToken", tokens.refresh); // Optional but recommended
+
+        // 2. Dispatch to Redux store
+        dispatch(
+          setUser({
+            user: userData,
+            token: tokens.access,
+            refreshToken: tokens.refresh,
+          }),
+        );
+
+        // 3. Redirect to home page
+        router.push("/");
+      } else {
+        // Handle API errors (e.g., incorrect credentials)
+        setErrors({ form: result.message || "Invalid email or password." });
+      }
     } catch (error) {
       console.error("Sign in error:", error);
+      setErrors({ form: "Something went wrong. Please try again later." });
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +121,13 @@ export default function SignInPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className='space-y-6'>
+            {/* General Form Error */}
+            {errors.form && (
+              <div className='p-3 text-sm text-red-500 bg-red-50 rounded-md border border-red-200'>
+                {errors.form}
+              </div>
+            )}
+
             {/* Email Address */}
             <div className='space-y-2'>
               <Label htmlFor='email' className='text-gray-700 font-medium'>
