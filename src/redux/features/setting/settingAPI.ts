@@ -18,6 +18,21 @@ const settingAPI = baseAPI.injectEndpoints({
       invalidatesTags: ["Settings"],
     }),
 
+    getAboutUs: builder.query({
+      query: () => ({
+        url: "/privacy/about-us/",
+        method: "GET",
+      }),
+    }),
+
+    updateAboutUs: builder.mutation({
+      query: (body) => ({
+        url: "/privacy/about-us/",
+        method: "POST",
+        body,
+      }),
+    }),
+
     getTermsAndConditions: builder.query({
       query: () => ({
         url: "/settings/terms_conditions/",
@@ -34,17 +49,17 @@ const settingAPI = baseAPI.injectEndpoints({
       invalidatesTags: ["Settings"],
     }),
 
-    getCMS: builder.query({
+    getPrivacyPolicy: builder.query({
       query: () => ({
-        url: "/admin_dashboard/cms/",
+        url: "/privacy/privacy-policy/",
       }),
       providesTags: ["Settings"],
     }),
 
-    updateCMS: builder.mutation({
+    updatePrivacyPolicy: builder.mutation({
       query: (data) => ({
-        url: "/admin_dashboard/admin/cms/",
-        method: "PATCH",
+        url: "/privacy/privacy-policy/",
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: ["Settings"],
@@ -54,10 +69,11 @@ const settingAPI = baseAPI.injectEndpoints({
 
 export const {
   useGetProfileQuery,
+  useGetAboutUsQuery,
   useUpdateProfileMutation,
-  useGetTermsAndConditionsQuery,
+  useUpdateAboutUsMutation,
   useUpdateTermsAndConditionsMutation,
-  useGetCMSQuery,
-  useUpdateCMSMutation,
+  useGetPrivacyPolicyQuery,
+  useUpdatePrivacyPolicyMutation,
 } = settingAPI;
 export default settingAPI;

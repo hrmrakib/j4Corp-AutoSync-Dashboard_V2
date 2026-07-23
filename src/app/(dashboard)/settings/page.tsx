@@ -1,9 +1,5 @@
 "use client";
 
-// =============================================================================
-// Settings Page — Manages state for different setting views
-// =============================================================================
-
 import { useState } from "react";
 import { SettingsMenu } from "@/components/settings/SettingsMenu";
 import { PersonalInfoView } from "@/components/settings/PersonalInfoView";
@@ -17,7 +13,9 @@ A non euismod duis enim sit. Vulputate volutpat suspendisse mauris at sollicitud
 Vitae morbi tortor purus gravida. Massa quam amet lorem netus facilisi risus pulvinar quis. Feugiat diam enim dolor sit dolor egestas aliquam. Tristique euismod maecenas nunc amet. Integer suscipit quis aliquam ligula pharetra. Nunc non enim iaculis dictum et quam eget justo. Ridiculus pellentesque volutpat vulputate scelerisque. Amet convallis sit morbi viverra aliquet tempor sit commodo sit. Euismod volutpat quis egestas nulla amet dui maecenas nulla.`;
 
 export default function SettingsPage() {
-  const [activeView, setActiveView] = useState<"menu" | "personal-info" | "privacy" | "terms" | "about">("menu");
+  const [activeView, setActiveView] = useState<
+    "menu" | "personal-info" | "privacy" | "terms" | "about"
+  >("menu");
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   const navigateTo = (view: string) => {
@@ -25,10 +23,10 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex justify-center p-2 sm:p-6">
+    <div className='flex justify-center p-2 sm:p-6'>
       {activeView === "menu" && (
-        <SettingsMenu 
-          onNavigate={navigateTo} 
+        <SettingsMenu
+          onNavigate={navigateTo}
           onOpenChangePassword={() => setIsPasswordModalOpen(true)}
         />
       )}
@@ -38,20 +36,32 @@ export default function SettingsPage() {
       )}
 
       {activeView === "privacy" && (
-        <ContentEditorView title="Privacy Policy" initialContent={LOREM_CONTENT} onBack={() => setActiveView("menu")} />
+        <ContentEditorView
+          title='Privacy Policy'
+          initialContent={LOREM_CONTENT}
+          onBack={() => setActiveView("menu")}
+        />
       )}
 
       {activeView === "terms" && (
-        <ContentEditorView title="Terms & Condition" initialContent={LOREM_CONTENT} onBack={() => setActiveView("menu")} />
+        <ContentEditorView
+          title='Terms & Condition'
+          initialContent={LOREM_CONTENT}
+          onBack={() => setActiveView("menu")}
+        />
       )}
 
       {activeView === "about" && (
-        <ContentEditorView title="About Us" initialContent={LOREM_CONTENT} onBack={() => setActiveView("menu")} />
+        <ContentEditorView
+          title='About Us'
+          initialContent={LOREM_CONTENT}
+          onBack={() => setActiveView("menu")}
+        />
       )}
 
-      <ChangePasswordModal 
-        isOpen={isPasswordModalOpen} 
-        onClose={() => setIsPasswordModalOpen(false)} 
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
       />
     </div>
   );
