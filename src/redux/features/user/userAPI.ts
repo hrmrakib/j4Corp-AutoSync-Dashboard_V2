@@ -4,7 +4,7 @@ const userAPI = baseAPI.injectEndpoints({
   endpoints: (build) => ({
     getAllUsers: build.query({
       query: (params) => ({
-        url: "/admin_dashboard/users/",
+        url: "/dashboard/status/",
         method: "GET",
         params,
       }),
