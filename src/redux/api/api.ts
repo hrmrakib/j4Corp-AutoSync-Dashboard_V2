@@ -56,6 +56,7 @@ const customBaseQuery: BaseQueryFn<
         }, 400);
       }
     }
+
     //  else if (status === 403) {
     //   toast.error("You need to verify your email to use this feature.");
     //   window.location.href = "/profile";
