@@ -80,8 +80,8 @@ export default function SignInPage() {
         const { tokens, ...userData } = result.data;
 
         // 1. Set tokens to localStorage
-        localStorage.setItem("accessToken", tokens.access);
-        localStorage.setItem("refreshToken", tokens.refresh); // Optional but recommended
+        localStorage.setItem("access_token", tokens.access);
+        localStorage.setItem("refresh_token", tokens.refresh); // Optional but recommended
 
         // 2. Dispatch to Redux store
         dispatch(

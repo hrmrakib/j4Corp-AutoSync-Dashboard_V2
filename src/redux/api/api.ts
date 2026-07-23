@@ -19,7 +19,7 @@ const baseQuery = fetchBaseQuery({
     if (typeof window !== "undefined") {
       const token = localStorage?.getItem("access_token");
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
       }
     }
     return headers;
@@ -52,7 +52,7 @@ const customBaseQuery: BaseQueryFn<
 
         setTimeout(() => {
           isLoggingOut = false;
-          window.location.replace("/login");
+          // window.location.replace("/login");
         }, 400);
       }
     }
