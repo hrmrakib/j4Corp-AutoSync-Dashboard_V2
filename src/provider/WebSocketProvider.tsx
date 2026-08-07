@@ -11,7 +11,7 @@ import React, {
 
 interface SocketContextType {
   socket: WebSocket | null;
-  connect: (conversationId: number) => void;
+  connect: (conversationId: string | number) => void;
   disconnect: () => void;
 }
 
@@ -32,7 +32,7 @@ export const WebSocketProvider = ({
 }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
-  const currentConversationId = useRef<number | null>(null);
+  const currentConversationId = useRef<string | number | null>(null);
 
   // Cleanly disconnect active socket
   const disconnect = useCallback(() => {
@@ -45,7 +45,7 @@ export const WebSocketProvider = ({
   }, []);
 
   const connect = useCallback(
-    (conversationId: number) => {
+    (conversationId: string | number) => {
       // Prevent reconnecting to the same conversation if socket is active
       if (
         currentConversationId.current === conversationId &&

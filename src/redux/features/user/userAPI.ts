@@ -22,6 +22,5 @@ const userAPI = baseAPI.injectEndpoints({
 export const {
   useGetAllUsersQuery,
   useGetSingleUserQuery,
-  useLazyGetSingleUserQuery,
 } = userAPI;
 export default userAPI;

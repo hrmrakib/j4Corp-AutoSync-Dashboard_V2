@@ -10,11 +10,15 @@ import { SellRequestDetailsModal } from "./SellRequestDetailsModal";
 import { Popover } from "@/components/ui/Popover";
 import { CalendarDatePicker } from "@/components/ui/CalendarDatePicker";
 import type { SellRequest } from "@/types";
+import { useGetSellRequestsQuery } from "@/redux/features/sellRequest/sellRequestAPI";
 
 export function SellRequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery);
   const [selectedRequest, setSelectedRequest] = useState<SellRequest | null>(null);
+
+  const {data} = useGetSellRequestsQuery(undefined)
+  console.log(data)
 
   const filteredRequests = useMemo(() => {
     if (!debouncedSearch) return mockSellRequests;

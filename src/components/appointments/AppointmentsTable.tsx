@@ -14,11 +14,14 @@ import { AppointmentDetailsModal } from "./AppointmentDetailsModal";
 import { Popover } from "@/components/ui/Popover";
 import { CalendarDatePicker } from "@/components/ui/CalendarDatePicker";
 import type { Appointment } from "@/types";
+import { useGetAppointmentsQuery } from "@/redux/features/appointment/appointmentAPI";
 
 export function AppointmentsTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const {data} = useGetAppointmentsQuery(undefined)
+  console.log(data)
 
   const filteredAppointments = useMemo(() => {
     if (!debouncedSearch) return mockAppointments;

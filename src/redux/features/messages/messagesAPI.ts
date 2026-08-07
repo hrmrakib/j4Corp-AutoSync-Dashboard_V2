@@ -18,6 +18,14 @@ const messagesAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    createRoom: builder.mutation({
+      query: ({ other_user_id }) => ({
+        url: `/chat/rooms/create/`,
+        method: "POST",
+        body: { other_user_id },
+      }),
+    }),
+
     fileUploadWithMessage: builder.mutation({
       query: ({ conversationId, body }) => {
         return {
@@ -33,6 +41,7 @@ const messagesAPI = baseAPI.injectEndpoints({
 export const {
   useGetMyConversationListsQuery,
   useGetMessagesQuery,
+  useCreateRoomMutation,
   useFileUploadWithMessageMutation,
 } = messagesAPI;
 export default messagesAPI;

@@ -2,12 +2,22 @@
 // StatsCards — Row of 3 stat cards on the dashboard
 // =============================================================================
 
-import { mockStats } from "@/data/mock-data";
+interface StatsCardsProps {
+  totalUsers: number;
+  appointmentsToday: number;
+  salesToday: number;
+}
 
-export function StatsCards() {
+export function StatsCards({ totalUsers, appointmentsToday, salesToday }: StatsCardsProps) {
+  const stats = [
+    { id: 1, title: "Total Users", value: totalUsers },
+    { id: 2, title: "Appointments Today", value: appointmentsToday },
+    { id: 3, title: "Sales Today", value: salesToday },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {mockStats.map((stat) => (
+      {stats.map((stat) => (
         <div
           key={stat.id}
           className="group relative overflow-hidden rounded-2xl bg-surface border border-border p-6 transition-all duration-300 hover:shadow-card hover:border-primary/20"
