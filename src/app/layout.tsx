@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import { ToastContainer } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 import Providers from "@/redux/features/Providers";
+import AppInitializer from "@/components/AppInitializer/AppInitilizer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -33,12 +34,14 @@ export default function RootLayout({
     >
       <body className='min-h-full font-sans antialiased'>
         <Providers>
+          <AppInitializer>
           <SidebarProvider>
             <ToastProvider>
               {children}
               <ToastContainer />
             </ToastProvider>
           </SidebarProvider>
+          </AppInitializer>
         </Providers>
       </body>
     </html>

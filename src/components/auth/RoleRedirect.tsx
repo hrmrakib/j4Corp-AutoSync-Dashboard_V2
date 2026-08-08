@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
+
 interface RoleRedirectProps {
   allowedRole?: "USER" | "ADMIN" | string;
   children: React.ReactNode;
