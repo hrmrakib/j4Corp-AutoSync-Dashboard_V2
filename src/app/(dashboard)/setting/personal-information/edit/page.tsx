@@ -9,18 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner"; // Assuming you use sonner or similar for feedback
-import {
-  useGetProfileQuery,
-  useUpdateProfileMutation,
-} from "@/redux/features/settings/settingsAPI";
+import { toast } from "sonner";
+import { useGetProfileQuery, useUpdateProfileMutation } from "@/redux/features/setting/settingAPI";
+
 
 export default function PersonalInformationEditPage() {
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
+    username: "",
     email: "",
+    phone: "",
     address: "",
-    bio: "",
+    zip_code: "",
+    dob: "",
   });
 
   const [profileImage, setProfileImage] = useState<File | string>("");
@@ -31,18 +33,20 @@ export default function PersonalInformationEditPage() {
   const { data: profileResponse, isLoading } = useGetProfileQuery({});
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
 
-  // Sync state with API data
   useEffect(() => {
     if (profileResponse?.data) {
       const user = profileResponse.data;
       setFormData({
-        name: user.name || "",
+        first_name: user.first_name || "",
+        last_name: user.last_name || "",
+        username: user.username || "",
         email: user.email || "",
+        phone: user.phone || "",
         address: user.address || "",
-        bio: user.bio || "",
+        zip_code: user.zip_code || "",
+        dob: user.dob ? String(user.dob).split("T")[0] : "", // ensure proper YYYY-MM-DD
       });
-      // Set existing image URL
-      setProfileImage(user.image || "");
+      setProfileImage(user.profile_pic || "");
     }
   }, [profileResponse]);
 
@@ -58,7 +62,7 @@ export default function PersonalInformationEditPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setProfileImage(file); // Store file object for upload
+      setProfileImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -70,49 +74,51 @@ export default function PersonalInformationEditPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prepare data as per your required format
-    const updateData = {
-      name: formData.name,
-      address: formData.address,
-      bio: formData.bio,
-    };
-
     const formDataToSubmit = new FormData();
-    // Append the JSON data as a string in the 'data' field
-    formDataToSubmit.append("data", JSON.stringify(updateData));
+    
+    // Append standard fields
+    if (formData.first_name) formDataToSubmit.append("first_name", formData.first_name);
+    if (formData.last_name) formDataToSubmit.append("last_name", formData.last_name);
+    if (formData.username) formDataToSubmit.append("username", formData.username);
+    if (formData.phone) formDataToSubmit.append("phone", formData.phone);
+    if (formData.address) formDataToSubmit.append("address", formData.address);
+    if (formData.zip_code) formDataToSubmit.append("zip_code", formData.zip_code);
+    if (formData.dob) formDataToSubmit.append("dob", formData.dob);
 
     // Append image if a new file was selected
     if (profileImage instanceof File) {
-      formDataToSubmit.append("image", profileImage);
+      formDataToSubmit.append("profile_pic", profileImage);
     }
 
     try {
-      const res = await updateProfile(formDataToSubmit).unwrap();
-      if (res.success) {
+      const user_id = profileResponse?.data?.user_id;
+      if (!user_id) throw new Error("User ID not found");
+      
+      const res = await updateProfile({ user_id, data: formDataToSubmit }).unwrap();
+      if (res.success || res.user_id) {
         toast.success("Profile updated successfully!");
         router.push("/setting/personal-information");
       }
-    } catch (error) {
-      toast.error("Failed to update profile");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to update profile");
       console.error("Update Error:", error);
     }
   };
 
-  // Determine which image to show
   const displayImageSource =
     imagePreview ||
     (typeof profileImage === "string" && profileImage
       ? profileImage
       : "/admin.jpg");
 
-  if (isLoading) return <div className='p-10 text-center'>Loading...</div>;
+  if (isLoading) return <div className='p-10 text-center text-black'>Loading...</div>;
 
   return (
     <div className='flex min-h-screen bg-transparent'>
       <div className='flex-1 w-full'>
         <main className='bg-transparent w-full p-4 md:p-6'>
           <div className='mx-auto'>
-            <div className='mb-6 text-primary'>
+            <div className='mb-6 text-black'>
               <Link
                 href='/setting/personal-information'
                 className='inline-flex items-center hover:text-teal-700'
@@ -154,36 +160,48 @@ export default function PersonalInformationEditPage() {
                   <span className='text-sm text-gray-600 font-medium'>
                     Profile Photo
                   </span>
-                  <span className='font-bold text-primary'>
-                    {formData.name || "User"}
+                  <span className='font-bold text-black'>
+                    {formData.first_name || "User"}
                   </span>
                 </div>
 
                 {/* Form Fields Section */}
-                <div className='flex-1 space-y-4'>
+                <div className='flex-1 grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div className='space-y-2'>
-                    <Label
-                      htmlFor='name'
-                      className='text-lg font-medium text-primary'
-                    >
-                      Name
-                    </Label>
+                    <Label htmlFor='first_name' className='text-lg font-medium text-black'>First Name</Label>
                     <Input
-                      id='name'
-                      name='name'
-                      value={formData.name}
+                      id='first_name'
+                      name='first_name'
+                      value={formData.first_name}
                       onChange={handleChange}
                       className='w-full text-lg border-gray-400 text-gray-900'
                     />
                   </div>
 
                   <div className='space-y-2'>
-                    <Label
-                      htmlFor='email'
-                      className='text-lg font-medium text-primary'
-                    >
-                      Email
-                    </Label>
+                    <Label htmlFor='last_name' className='text-lg font-medium text-black'>Last Name</Label>
+                    <Input
+                      id='last_name'
+                      name='last_name'
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      className='w-full text-lg border-gray-400 text-gray-900'
+                    />
+                  </div>
+
+                  <div className='space-y-2'>
+                    <Label htmlFor='username' className='text-lg font-medium text-black'>Username</Label>
+                    <Input
+                      id='username'
+                      name='username'
+                      value={formData.username}
+                      onChange={handleChange}
+                      className='w-full text-lg border-gray-400 text-gray-900'
+                    />
+                  </div>
+
+                  <div className='space-y-2'>
+                    <Label htmlFor='email' className='text-lg font-medium text-black'>Email</Label>
                     <Input
                       id='email'
                       disabled
@@ -191,14 +209,20 @@ export default function PersonalInformationEditPage() {
                       className='w-full text-lg bg-gray-100 cursor-not-allowed border-gray-400 text-gray-900'
                     />
                   </div>
+                  
+                  <div className='space-y-2'>
+                    <Label htmlFor='phone' className='text-lg font-medium text-black'>Phone</Label>
+                    <Input
+                      id='phone'
+                      name='phone'
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className='w-full text-lg border-gray-400 text-gray-900'
+                    />
+                  </div>
 
                   <div className='space-y-2'>
-                    <Label
-                      htmlFor='address'
-                      className='text-lg font-medium text-primary'
-                    >
-                      Address
-                    </Label>
+                    <Label htmlFor='address' className='text-lg font-medium text-black'>Address</Label>
                     <Input
                       id='address'
                       name='address'
@@ -209,16 +233,23 @@ export default function PersonalInformationEditPage() {
                   </div>
 
                   <div className='space-y-2'>
-                    <Label
-                      htmlFor='bio'
-                      className='text-lg font-medium text-primary'
-                    >
-                      Bio
-                    </Label>
+                    <Label htmlFor='zip_code' className='text-lg font-medium text-black'>Zip Code</Label>
                     <Input
-                      id='bio'
-                      name='bio'
-                      value={formData.bio}
+                      id='zip_code'
+                      name='zip_code'
+                      value={formData.zip_code}
+                      onChange={handleChange}
+                      className='w-full text-lg border-gray-400 text-gray-900'
+                    />
+                  </div>
+
+                  <div className='space-y-2'>
+                    <Label htmlFor='dob' className='text-lg font-medium text-black'>Date of Birth</Label>
+                    <Input
+                      id='dob'
+                      name='dob'
+                      type='date'
+                      value={formData.dob}
                       onChange={handleChange}
                       className='w-full text-lg border-gray-400 text-gray-900'
                     />

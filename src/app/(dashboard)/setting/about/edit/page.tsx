@@ -62,7 +62,7 @@ export default function EditAbout() {
     };
   }, [terms]);
 
-  if (isLoading && !terms && !quillRef.current) return <div className="flex items-center justify-center min-h-[50vh] text-lg text-primary">Loading...</div>;
+  if (isLoading && !terms && !quillRef.current) return <div className="flex items-center justify-center min-h-[50vh] text-lg text-black">Loading...</div>;
 
   const handleSubmit = async () => {
     if (!content || content === "<p><br></p>") {
@@ -96,7 +96,7 @@ export default function EditAbout() {
         <div className='h-auto'>
           <div
             ref={editorRef}
-            className='h-[50vh] bg-white text-base text-primary'
+            className='h-[50vh] bg-white text-base text-black'
             id='quill-editor'
           />
         </div>

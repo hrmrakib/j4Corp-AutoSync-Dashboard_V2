@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Edit } from "lucide-react";
-import { useGetProfileQuery } from "@/redux/features/settings/settingsAPI";
+import { useGetProfileQuery } from "@/redux/features/setting/settingAPI";
 
 export default function PersonalInformationPage() {
   const { data: profileData, isLoading } = useGetProfileQuery({});
@@ -13,7 +13,7 @@ export default function PersonalInformationPage() {
   if (isLoading) {
     return (
       <div className='flex min-h-screen items-center justify-center bg-[#FFFFFF]'>
-        <p className='text-lg text-primary animate-pulse'>Loading Profile...</p>
+        <p className='text-lg text-black animate-pulse'>Loading Profile...</p>
       </div>
     );
   }
@@ -26,7 +26,7 @@ export default function PersonalInformationPage() {
             <div className='mb-6 flex items-center justify-between'>
               <Link
                 href='/setting'
-                className='inline-flex items-center text-primary hover:text-teal-700'
+                className='inline-flex items-center text-black hover:text-teal-700'
               >
                 <ArrowLeft className='mr-2 h-6 w-6' />
                 <span className='text-2xl font-semibold'>
@@ -50,51 +50,75 @@ export default function PersonalInformationPage() {
                 <div className='w-full md:w-64 flex flex-col items-center border border-gray-600 rounded-md px-6 py-10'>
                   <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3'>
                     <Image
-                      src={profile?.image || "/admin.jpg"} // Falls back to local image if API image is null
+                      src={profile?.profile_pic || "/admin.jpg"}
                       alt='Profile'
                       fill
                       className='object-cover'
                     />
                   </div>
-                  <span className='text-base text-primary uppercase'>
-                    {profile?.role || "Admin"}
+                  <span className='text-base text-black uppercase'>
+                    {profile?.is_superuser ? "Superuser" : profile?.is_staff ? "Admin" : "User"}
                   </span>
-                  <span className='font-medium text-lg text-primary'>
-                    {profile?.name}
+                  <span className='font-medium text-lg text-black'>
+                    {profile?.full_name || profile?.first_name || "N/A"}
                   </span>
                 </div>
 
                 {/* User Information Section */}
-                <div className='flex-1 space-y-6'>
+                <div className='flex-1 grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div className='flex flex-col gap-1'>
-                    <div className='text-lg font-medium text-primary'>Name</div>
-                    <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
-                      {profile?.name || "N/A"}
+                    <div className='text-lg font-medium text-black'>First Name</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
+                      {profile?.first_name || "N/A"}
                     </div>
                   </div>
 
                   <div className='flex flex-col gap-1'>
-                    <div className='text-lg font-medium text-primary'>
-                      Email
+                    <div className='text-lg font-medium text-black'>Last Name</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
+                      {profile?.last_name || "N/A"}
                     </div>
-                    <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
+                  </div>
+
+                  <div className='flex flex-col gap-1'>
+                    <div className='text-lg font-medium text-black'>Username</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
+                      {profile?.username || "N/A"}
+                    </div>
+                  </div>
+
+                  <div className='flex flex-col gap-1'>
+                    <div className='text-lg font-medium text-black'>Email</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
                       {profile?.email || "N/A"}
                     </div>
                   </div>
 
                   <div className='flex flex-col gap-1'>
-                    <div className='text-lg font-medium text-primary'>
-                      Address
+                    <div className='text-lg font-medium text-black'>Phone</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
+                      {profile?.phone || "N/A"}
                     </div>
-                    <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
+                  </div>
+                  
+                  <div className='flex flex-col gap-1'>
+                    <div className='text-lg font-medium text-black'>Address</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
                       {profile?.address || "N/A"}
                     </div>
                   </div>
-
+                  
                   <div className='flex flex-col gap-1'>
-                    <div className='text-lg font-medium text-primary'>Bio</div>
-                    <div className='text-lg text-primary px-2 py-3 rounded-md border border-gray-500'>
-                      {profile?.bio || "N/A"}
+                    <div className='text-lg font-medium text-black'>Zip Code</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
+                      {profile?.zip_code || "N/A"}
+                    </div>
+                  </div>
+                  
+                  <div className='flex flex-col gap-1'>
+                    <div className='text-lg font-medium text-black'>Date of Birth</div>
+                    <div className='text-lg text-black px-2 py-3 rounded-md border border-gray-500'>
+                      {profile?.dob || "N/A"}
                     </div>
                   </div>
                 </div>

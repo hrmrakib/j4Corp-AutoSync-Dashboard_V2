@@ -12,7 +12,7 @@ export default function AppInitializer({
 }) {
   const dispatch = useDispatch();
   const token =
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   const { data, isLoading } = useGetProfileQuery({}, { skip: !token });
 
@@ -32,6 +32,9 @@ export default function AppInitializer({
       );
     }
   }, [data, token, dispatch]);
+
+  console.log({data})
+
 
   return children;
 }

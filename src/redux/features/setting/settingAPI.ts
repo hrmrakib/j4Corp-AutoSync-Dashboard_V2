@@ -10,8 +10,8 @@ const settingAPI = baseAPI.injectEndpoints({
     }),
 
     updateProfile: builder.mutation({
-      query: (data) => ({
-        url: "/account/users/me/",
+      query: ({ user_id, data }) => ({
+        url: `/account/users/${user_id}/update/`,
         method: "PATCH",
         body: data,
       }),
