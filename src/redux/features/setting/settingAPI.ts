@@ -18,62 +18,39 @@ const settingAPI = baseAPI.injectEndpoints({
       invalidatesTags: ["Settings"],
     }),
 
-    getAboutUs: builder.query({
-      query: () => ({
-        url: "/privacy/about-us/",
+    getContentBySlug: builder.query({
+      query: (slug) => ({
+        url: `/privacy/content/${slug}/`,
         method: "GET",
       }),
+      providesTags: (result, error, slug) => [{ type: "Settings", id: slug }],
     }),
 
-    updateAboutUs: builder.mutation({
-      query: (body) => ({
-        url: "/privacy/about-us/",
-        method: "POST",
-        body,
-      }),
-    }),
-
-    getTermsAndConditions: builder.query({
-      query: () => ({
-        url: "/settings/terms_conditions/",
-      }),
-      providesTags: ["Settings"],
-    }),
-
-    updateTermsAndConditions: builder.mutation({
-      query: (data) => ({
-        url: "/settings/terms_conditions/",
+    updateContentBySlug: builder.mutation({
+      query: ({ slug, data }) => ({
+        url: `/privacy/content/${slug}/`,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Settings"],
+      invalidatesTags: (result, error, { slug }) => [{ type: "Settings", id: slug }],
     }),
 
-    getPrivacyPolicy: builder.query({
-      query: () => ({
-        url: "/privacy/privacy-policy/",
-      }),
-      providesTags: ["Settings"],
-    }),
-
-    updatePrivacyPolicy: builder.mutation({
-      query: (data) => ({
-        url: "/privacy/privacy-policy/",
-        method: "PUT",
+    patchContentBySlug: builder.mutation({
+      query: ({ slug, data }) => ({
+        url: `/privacy/content/${slug}/`,
+        method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["Settings"],
+      invalidatesTags: (result, error, { slug }) => [{ type: "Settings", id: slug }],
     }),
   }),
 });
 
 export const {
   useGetProfileQuery,
-  useGetAboutUsQuery,
   useUpdateProfileMutation,
-  useUpdateAboutUsMutation,
-  useUpdateTermsAndConditionsMutation,
-  useGetPrivacyPolicyQuery,
-  useUpdatePrivacyPolicyMutation,
+  useGetContentBySlugQuery,
+  useUpdateContentBySlugMutation,
+  usePatchContentBySlugMutation,
 } = settingAPI;
 export default settingAPI;

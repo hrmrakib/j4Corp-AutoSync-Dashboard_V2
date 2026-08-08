@@ -108,21 +108,15 @@ export interface ChatMessage {
 
 /** Represents a sell request */
 export interface SellRequest {
-  id: string;
-  name: string;
-  email: string;
-  make: string;
-  model: string;
-  year: number;
-  vin: string;
-  color: string;
-  miles: string;
-  loanLineholder: string;
-  payoffBalance: string;
-  overallCondition: string;
-  additionalParts: string;
-  details: string;
-  imageUrl: string;
+  id: number;
+  unit: number;
+  unit_brand: string;
+  unit_model: string;
+  seller: number;
+  seller_name: string;
+  additional_details: string;
+  created_at: string;
+  updated_at: string;
 }
 
 /** Represents a document in the AI page */

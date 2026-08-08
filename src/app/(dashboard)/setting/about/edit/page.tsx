@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  useGetAboutQuery,
-  useSetAboutMutation,
-} from "@/redux/features/settings/settingsAPI";
-import Spinner from "@/components/loading/Spinner";
+  useGetContentBySlugQuery,
+  useUpdateContentBySlugMutation,
+} from "@/redux/features/setting/settingAPI";
 
 export default function EditAbout() {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -19,11 +18,12 @@ export default function EditAbout() {
   const [content, setContent] = useState<string>("");
   const router = useRouter();
 
-  const { data: termsData, isLoading } = useGetAboutQuery({});
+  const { data: termsData, isLoading } = useGetContentBySlugQuery("about-us");
   const terms = termsData?.data;
+  const description = Array.isArray(terms) ? terms[0]?.description : terms?.description;
 
-  const [setPrivacyPolicyMutation, { isLoading: isSaving }] =
-    useSetAboutMutation();
+  const [updateContentBySlugMutation, { isLoading: isSaving }] =
+    useUpdateContentBySlugMutation();
 
   useEffect(() => {
     let initialized = false;
@@ -42,9 +42,9 @@ export default function EditAbout() {
 
         quillRef.current = quill;
 
-        if (terms[0]?.description) {
-          quill.root.innerHTML = terms[0].description;
-          setContent(terms[0].description);
+        if (description) {
+          quill.root.innerHTML = description;
+          setContent(description);
         }
 
         quill.on("text-change", () => {
@@ -62,7 +62,7 @@ export default function EditAbout() {
     };
   }, [terms]);
 
-  if (isLoading && !terms && !quillRef.current) return <Spinner />;
+  if (isLoading && !terms && !quillRef.current) return <div className="flex items-center justify-center min-h-[50vh] text-lg text-primary">Loading...</div>;
 
   const handleSubmit = async () => {
     if (!content || content === "<p><br></p>") {
@@ -71,8 +71,12 @@ export default function EditAbout() {
     }
 
     try {
-      const res = await setPrivacyPolicyMutation({
-        description: content,
+      const res = await updateContentBySlugMutation({
+        slug: "about-us",
+        data: {
+          title: "About Us",
+          description: content,
+        },
       }).unwrap();
 
       if (res) {

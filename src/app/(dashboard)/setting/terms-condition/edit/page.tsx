@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  useGetTermsAndConditionsQuery,
-  useSetTermsAndConditionsMutation,
-} from "@/redux/features/settings/settingsAPI";
-import Spinner from "@/components/loading/Spinner";
+  useGetContentBySlugQuery,
+  useUpdateContentBySlugMutation,
+} from "@/redux/features/setting/settingAPI";
 
 export default function EditTermsAndConditionsPage() {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -19,11 +18,12 @@ export default function EditTermsAndConditionsPage() {
   const [content, setContent] = useState<string>("");
   const router = useRouter();
 
-  const { data: termsData, isLoading } = useGetTermsAndConditionsQuery({});
+  const { data: termsData, isLoading } = useGetContentBySlugQuery("terms-conditions");
   const terms = termsData?.data;
+  const description = Array.isArray(terms) ? terms[0]?.description : terms?.description;
 
-  const [setTermsAndConditions, { isLoading: isSaving }] =
-    useSetTermsAndConditionsMutation();
+  const [updateContentBySlugMutation, { isLoading: isSaving }] =
+    useUpdateContentBySlugMutation();
 
   useEffect(() => {
     let initialized = false;
@@ -42,9 +42,9 @@ export default function EditTermsAndConditionsPage() {
 
         quillRef.current = quill;
 
-        if (terms[0]?.description) {
-          quill.root.innerHTML = terms[0].description;
-          setContent(terms[0].description);
+        if (description) {
+          quill.root.innerHTML = description;
+          setContent(description);
         }
 
         quill.on("text-change", () => {
@@ -62,7 +62,7 @@ export default function EditTermsAndConditionsPage() {
     };
   }, [terms]);
 
-  if (isLoading && !terms && !quillRef.current) return <Spinner />;
+  if (isLoading && !terms && !quillRef.current) return <div className="flex items-center justify-center min-h-[50vh] text-lg text-primary">Loading...</div>;
 
   const handleSubmit = async () => {
     if (!content || content === "<p><br></p>") {
@@ -71,8 +71,12 @@ export default function EditTermsAndConditionsPage() {
     }
 
     try {
-      const res = await setTermsAndConditions({
-        description: content,
+      const res = await updateContentBySlugMutation({
+        slug: "terms-conditions",
+        data: {
+          title: "Terms and Conditions",
+          description: content,
+        },
       }).unwrap();
 
       if (res) {

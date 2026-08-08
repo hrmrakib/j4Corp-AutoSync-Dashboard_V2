@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  useGetPrivacyPolicyQuery,
-  useSetPrivacyPolicyMutation,
-} from "@/redux/features/settings/settingsAPI";
-import Spinner from "@/components/loading/Spinner";
+  useGetContentBySlugQuery,
+  useUpdateContentBySlugMutation,
+} from "@/redux/features/setting/settingAPI";
 
 export default function EditPrivacyPolicyPage() {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -19,11 +18,12 @@ export default function EditPrivacyPolicyPage() {
   const [content, setContent] = useState<string>("");
   const router = useRouter();
 
-  const { data: termsData, isLoading } = useGetPrivacyPolicyQuery({});
+  const { data: termsData, isLoading } = useGetContentBySlugQuery("privacy-policy");
   const terms = termsData?.data;
+  const description = Array.isArray(terms) ? terms[0]?.description : terms?.description;
 
-  const [setPrivacyPolicyMutation, { isLoading: isSaving }] =
-    useSetPrivacyPolicyMutation();
+  const [updateContentBySlugMutation, { isLoading: isSaving }] =
+    useUpdateContentBySlugMutation();
 
   useEffect(() => {
     let initialized = false;
@@ -37,14 +37,14 @@ export default function EditPrivacyPolicyPage() {
       if (editorRef.current && !editorRef.current.querySelector(".ql-editor")) {
         const quill = new Quill(editorRef.current, {
           theme: "snow",
-          placeholder: "Enter your Terms and Conditions...",
+          placeholder: "Enter your Privacy Policy...",
         });
 
         quillRef.current = quill;
 
-        if (terms[0]?.description) {
-          quill.root.innerHTML = terms[0].description;
-          setContent(terms[0].description);
+        if (description) {
+          quill.root.innerHTML = description;
+          setContent(description);
         }
 
         quill.on("text-change", () => {
@@ -62,7 +62,7 @@ export default function EditPrivacyPolicyPage() {
     };
   }, [terms]);
 
-  if (isLoading && !terms && !quillRef.current) return <Spinner />;
+  if (isLoading && !terms && !quillRef.current) return <div className="flex items-center justify-center min-h-[50vh] text-lg text-primary">Loading...</div>;
 
   const handleSubmit = async () => {
     if (!content || content === "<p><br></p>") {
@@ -71,8 +71,12 @@ export default function EditPrivacyPolicyPage() {
     }
 
     try {
-      const res = await setPrivacyPolicyMutation({
-        description: content,
+      const res = await updateContentBySlugMutation({
+        slug: "privacy-policy",
+        data: {
+          title: "Privacy Policy",
+          description: content,
+        },
       }).unwrap();
 
       if (res) {
@@ -81,7 +85,7 @@ export default function EditPrivacyPolicyPage() {
       }
     } catch (err: any) {
       toast.error(
-        err?.data?.message || "Failed to update Terms and Conditions",
+        err?.data?.message || "Failed to update Privacy Policy",
       );
     }
   };

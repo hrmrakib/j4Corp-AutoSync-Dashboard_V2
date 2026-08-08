@@ -2,7 +2,6 @@
 
 import { Modal } from "@/components/ui/Modal";
 import type { SellRequest } from "@/types";
-import Image from "next/image";
 
 interface SellRequestDetailsModalProps {
   isOpen: boolean;
@@ -18,57 +17,25 @@ export function SellRequestDetailsModal({
   if (!request) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Sell Request">
+    <Modal isOpen={isOpen} onClose={onClose} title="Sell Request Details">
       <div className="space-y-4">
-        <DetailRow label="Name" value={request.name} />
-        <div className="h-px bg-border-light w-full" />
+        <DetailRow label="Seller Name" value={request.seller_name} />
+        <div className="h-px bg-gray-100 w-full" />
         
-        <DetailRow label="Email" value={request.email} />
-        <div className="h-px bg-border-light w-full" />
+        <DetailRow label="Brand" value={request.unit_brand} />
+        <div className="h-px bg-gray-100 w-full" />
         
-        <DetailRow label="Make" value={request.make} />
-        <div className="h-px bg-border-light w-full" />
+        <DetailRow label="Model" value={request.unit_model} />
+        <div className="h-px bg-gray-100 w-full" />
         
-        <DetailRow label="Model" value={request.model} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Year" value={String(request.year)} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Vin" value={request.vin} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Color" value={request.color} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Miles" value={request.miles} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Loan/Lineholder" value={request.loanLineholder} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Payoff Balance" value={request.payoffBalance} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Overall Condition" value={request.overallCondition} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Additional Parts & Accessories" value={request.additionalParts} />
-        <div className="h-px bg-border-light w-full" />
+        <DetailRow label="Submitted At" value={new Date(request.created_at).toLocaleString()} />
+        <div className="h-px bg-gray-100 w-full" />
         
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-text-muted">Details including scratches, dents, paint, mechanical needs, etc.</span>
-          <span className="text-base font-semibold text-text-primary">{request.details}</span>
-        </div>
-        
-        <div className="mt-4 overflow-hidden rounded-xl">
-          <Image
-            src={request.imageUrl}
-            alt="Motorcycle"
-            width={400}
-            height={250}
-            className="w-full object-cover"
-          />
+          <span className="text-sm font-medium text-gray-500">Additional Details</span>
+          <span className="text-base font-medium text-gray-900 bg-gray-50 p-4 rounded-xl border border-gray-100 mt-2">
+            {request.additional_details || "No additional details provided."}
+          </span>
         </div>
       </div>
     </Modal>
@@ -78,8 +45,8 @@ export function SellRequestDetailsModal({
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-sm font-medium text-text-muted">{label}</span>
-      <span className="text-base font-semibold text-text-primary">{value}</span>
+      <span className="text-sm font-medium text-gray-500">{label}</span>
+      <span className="text-base font-semibold text-gray-900">{value}</span>
     </div>
   );
 }

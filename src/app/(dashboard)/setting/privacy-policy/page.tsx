@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useGetPrivacyPolicyQuery } from "@/redux/features/settings/settingsAPI";
-import Spinner from "@/components/loading/Spinner";
+import { useGetContentBySlugQuery } from "@/redux/features/setting/settingAPI";
 
 export default function PrivacyPolicyPage() {
-  const { data: termsData, isLoading } = useGetPrivacyPolicyQuery({});
+  const { data: termsData, isLoading } = useGetContentBySlugQuery("privacy-policy");
 
   const terms = termsData?.data;
+  const description = Array.isArray(terms) ? terms[0]?.description : terms?.description;
 
   if (isLoading) {
-    return <Spinner />;
+    return <div className="flex items-center justify-center min-h-[50vh] text-lg text-primary">Loading...</div>;
   }
 
   return (
@@ -37,13 +37,13 @@ export default function PrivacyPolicyPage() {
             </div>
 
             <div className='prose prose-sm max-w-none text-primary'>
-              {terms[0]?.description && !isLoading ? (
+              {description && !isLoading ? (
                 <div
                   className='prose prose-sm max-w-none'
-                  dangerouslySetInnerHTML={{ __html: terms[0]?.description }}
+                  dangerouslySetInnerHTML={{ __html: description }}
                 />
               ) : (
-                !isLoading && <p>No terms and conditions found</p>
+                !isLoading && <p>No privacy policy found</p>
               )}
 
               {isLoading && <p> Loading...</p>}
