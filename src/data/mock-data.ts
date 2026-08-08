@@ -336,7 +336,7 @@ export const mockRegisteredUnits: RegisteredUnit[] = [
 // Appointments
 // =============================================================================
 
-export const mockAppointments: Appointment[] = [
+export const mockAppointments: any[] = [
   {
     id: "a-1",
     name: "Ralph Edwards",

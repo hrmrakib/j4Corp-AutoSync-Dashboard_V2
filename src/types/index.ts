@@ -72,19 +72,19 @@ export interface ToastMessage {
 /** Chart tab options */
 export type ChartTab = "totalUsers" | "appointments";
 
-/** Represents an appointment in the system */
+/** Represents an appointment returned by the API */
 export interface Appointment {
-  id: string;
-  name: string;
+  id: number;
+  unit: number;
+  full_name: string;
   email: string;
-  zipCode: string;
-  make: string;
-  model: string;
-  year: number;
-  service: string;
+  model_name: string;
   location: string;
-  date: string;
-  servicedBefore: "Yes" | "No";
+  appointment_date: string;
+  details: string;
+  has_serviced_before: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 /** Represents a contact in the Inbox */

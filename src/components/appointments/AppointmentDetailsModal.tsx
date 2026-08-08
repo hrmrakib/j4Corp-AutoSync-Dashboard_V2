@@ -23,34 +23,25 @@ export function AppointmentDetailsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Appointments Details">
       <div className="space-y-4">
-        <DetailRow label="Name" value={appointment.name} />
+        <DetailRow label="Name" value={appointment.full_name} />
         <div className="h-px bg-border-light w-full" />
         
         <DetailRow label="Email" value={appointment.email} />
         <div className="h-px bg-border-light w-full" />
         
-        <DetailRow label="ZIP Code" value={appointment.zipCode} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Make" value={appointment.make} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Model" value={appointment.model} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Year" value={String(appointment.year)} />
-        <div className="h-px bg-border-light w-full" />
-        
-        <DetailRow label="Service" value={appointment.service} />
+        <DetailRow label="Model" value={appointment.model_name} />
         <div className="h-px bg-border-light w-full" />
         
         <DetailRow label="Location" value={appointment.location} />
         <div className="h-px bg-border-light w-full" />
         
-        <DetailRow label="Date" value={appointment.date} />
+        <DetailRow label="Date" value={new Date(appointment.appointment_date).toLocaleDateString()} />
+        <div className="h-px bg-border-light w-full" />
+
+        <DetailRow label="Details" value={appointment.details || "N/A"} />
         <div className="h-px bg-border-light w-full" />
         
-        <DetailRow label="Have we serviced your vehicle before?" value={appointment.servicedBefore} />
+        <DetailRow label="Have we serviced your vehicle before?" value={appointment.has_serviced_before ? "Yes" : "No"} />
       </div>
     </Modal>
   );
