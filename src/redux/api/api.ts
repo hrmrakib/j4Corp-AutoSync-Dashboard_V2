@@ -17,8 +17,9 @@ const baseQuery = fetchBaseQuery({
     console.log("Preparing headers for API request", window?.location?.href);
 
     if (typeof window !== "undefined") {
-      const token = localStorage?.getItem("access_token");
-      if (token) {
+      const rawToken = localStorage?.getItem("access_token");
+      if (rawToken) {
+        const token = rawToken.replace(/^["']|["']$/g, "");
         headers.set("Authorization", `Bearer ${token}`);
       }
     }

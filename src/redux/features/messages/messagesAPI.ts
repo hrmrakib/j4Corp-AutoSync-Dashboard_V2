@@ -10,6 +10,14 @@ const messagesAPI = baseAPI.injectEndpoints({
       }),
     }),
 
+    getChatRooms: builder.query({
+      query: (search?: string) => ({
+        url: `/chat/rooms/`,
+        method: "GET",
+        params: search ? { search } : undefined,
+      }),
+    }),
+
     getMessages: builder.query({
       query: ({ conversationId, page, page_size, search }) => ({
         url: `/chats/messages/${conversationId}`,
@@ -40,6 +48,7 @@ const messagesAPI = baseAPI.injectEndpoints({
 
 export const {
   useGetMyConversationListsQuery,
+  useGetChatRoomsQuery,
   useGetMessagesQuery,
   useCreateRoomMutation,
   useFileUploadWithMessageMutation,

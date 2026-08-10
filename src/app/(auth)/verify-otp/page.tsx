@@ -111,7 +111,6 @@ export default function VerifyAccountPage() {
       // Note: In a real app, you would dispatch your resend OTP mutation here
       // (likely using the email parameter from the URL).
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Resend OTP requested");
 
       // Clear current OTP and focus first input
       setOtp(["", "", "", "", "", ""]);
