@@ -129,6 +129,15 @@ export function UsersTable() {
                           <InfoIcon className='h-4 w-4' />
                         </IconButton>
                         <IconButton
+                          label={`View registered units for ${user.full_name || user.first_name}`}
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowUnitsModal(true);
+                          }}
+                        >
+                          <MotorcycleIcon className='h-4 w-4' />
+                        </IconButton>
+                        <IconButton
                           label={`Message ${user.full_name || user.first_name}`}
                           onClick={() => router.push('/inbox')}
                         >
@@ -181,8 +190,12 @@ export function UsersTable() {
 
       {/* Registered Units Modal */}
       <RegisteredUnitsModal
+        user={selectedUser}
         isOpen={showUnitsModal}
-        onClose={() => setShowUnitsModal(false)}
+        onClose={() => {
+          setShowUnitsModal(false);
+          if (!showDetailModal) setSelectedUser(null);
+        }}
       />
     </>
   );

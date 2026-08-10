@@ -34,6 +34,7 @@ interface RecentUsersTableProps {
 
 export function RecentUsersTable({ users, searchQuery, onSearchChange }: RecentUsersTableProps) {
   const [showUnitsModal, setShowUnitsModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const { addToast } = useToast();
 
   const recentUsers = useMemo(() => {
@@ -133,7 +134,10 @@ export function RecentUsersTable({ users, searchQuery, onSearchChange }: RecentU
                         </IconButton>
                         <IconButton
                           label={`View registered units for ${user.full_name || user.first_name}`}
-                          onClick={() => setShowUnitsModal(true)}
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowUnitsModal(true);
+                          }}
                         >
                           <MotorcycleIcon className="h-4 w-4" />
                         </IconButton>
@@ -149,8 +153,12 @@ export function RecentUsersTable({ users, searchQuery, onSearchChange }: RecentU
 
       {/* Registered Units Modal */}
       <RegisteredUnitsModal
+        user={selectedUser}
         isOpen={showUnitsModal}
-        onClose={() => setShowUnitsModal(false)}
+        onClose={() => {
+          setShowUnitsModal(false);
+          setSelectedUser(null);
+        }}
       />
     </>
   );
