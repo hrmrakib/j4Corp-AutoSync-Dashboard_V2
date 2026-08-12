@@ -1,0 +1,33 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || '22' }}
+          script: |
+            cd /opt/motorsports/frontend
+            git config --global --add safe.directory /opt/motorsports/frontend
+            git reset --hard
+            git clean -fd
+            
+            # Using GitHub PAT to pull from private repo
+            git pull https://x-access-token:${{ secrets.GH_PAT }}@github.com/hrmrakib/j4Corp-AutoSync-Dashboard_V2.git main
+            
+            # Rebuild and restart the container
+            docker-compose down
+            docker-compose up -d --build
