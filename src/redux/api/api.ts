@@ -56,6 +56,8 @@ const customBaseQuery: BaseQueryFn<
           window.location.replace("/login");
         }, 400);
       }
+    } else if (status === "FETCH_ERROR") {
+      toast.error("Network error! Please check your backend CORS settings or server connection.");
     }
 
     //  else if (status === 403) {
