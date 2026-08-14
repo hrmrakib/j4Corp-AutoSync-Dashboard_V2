@@ -17,6 +17,7 @@ import { useEffect, useRef } from "react";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { LogoutModal } from "@/components/layout/LogoutModal";
 import toast from "react-hot-toast";
+import { logout } from "@/service/authService";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -28,6 +29,9 @@ export function Sidebar() {
 
   const handleLogout = () => {
     // In a real app, clear tokens, auth state, etc.
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    logout(); // Dispatch logout action to Redux store
     setIsLogoutModalOpen(false);
     toast.success("Logged out successfully");
     router.push("/login");

@@ -12,6 +12,7 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 // Adjust the import path to match where your authSlice is located
 import { setUser } from "@/redux/features/auth/authSlice";
+import { saveTokens } from "@/service/authService";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -82,6 +83,7 @@ export default function SignInPage() {
         // 1. Set tokens to localStorage
         localStorage.setItem("access_token", tokens.access);
         localStorage.setItem("refresh_token", tokens.refresh); // Optional but recommended
+        await saveTokens(tokens.access); // Save tokens using your authService
 
         // 2. Dispatch to Redux store
         dispatch(
