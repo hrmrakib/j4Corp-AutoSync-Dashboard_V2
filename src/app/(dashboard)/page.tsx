@@ -5,6 +5,9 @@
 // =============================================================================
 
 import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import { useGetOverviewQuery } from "@/redux/features/overview/overviewAPI";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { RecentUsersTable } from "@/components/dashboard/RecentUsersTable";
@@ -13,10 +16,18 @@ import { useDebounce } from "@/hooks/useDebounce";
 export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery);
+  const { isLoggedIn, profileLoading } = useAuth();
+  const router = useRouter();
 
-  const { data: response, isLoading } = useGetOverviewQuery({ search: debouncedSearch });
+  useEffect(() => {
+    if (!profileLoading && !isLoggedIn) {
+      router.push("/login");
+    }
+  }, [isLoggedIn, profileLoading, router]);
 
-  if (isLoading) {
+  const { data: response, isLoading } = useGetOverviewQuery({ search: debouncedSearch }, { skip: !isLoggedIn });
+
+  if (profileLoading || isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
         <div className="text-text-muted">Loading dashboard...</div>
