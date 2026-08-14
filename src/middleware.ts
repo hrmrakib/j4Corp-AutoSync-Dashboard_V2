@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getCurrentUser } from "./service/authService";
+import type { NextRequest } from "next/server";
 
-export default async function proxy(request: Request) {
-  // Fetch current user (authentication token)
-  const token = await getCurrentUser();
+export default async function proxy(request: NextRequest) {
+  // Fetch current user (authentication token) from request cookies directly
+  const token = request.cookies.get("token")?.value;
 
   // If there's no token, redirect to login page
   if (!token) {

@@ -53,7 +53,7 @@ const customBaseQuery: BaseQueryFn<
 
         setTimeout(() => {
           isLoggingOut = false;
-          // window.location.replace("/login");
+          window.location.replace("/login");
         }, 400);
       }
     }
