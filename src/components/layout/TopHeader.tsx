@@ -12,13 +12,18 @@ import { BellIcon, MenuIcon, ChevronDownIcon } from "@/components/ui/Icons";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { mockNotifications } from "@/data/mock-data";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export function TopHeader() {
+  const router = useRouter();
   const { toggle } = useSidebar();
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = mockNotifications.filter((n) => !n.read).length;
+  const { user } = useAuth();
+  console.log({ user });
 
   const closeNotifications = useCallback(() => {
     setShowNotifications(false);
@@ -27,38 +32,38 @@ export function TopHeader() {
   useClickOutside(notificationRef, closeNotifications);
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between bg-surface-secondary/80 backdrop-blur-md px-4 py-4 lg:px-8">
+    <header className='sticky top-0 z-30 flex items-center justify-between bg-surface-secondary/80 backdrop-blur-md px-4 py-4 lg:px-8'>
       {/* Left: Hamburger (mobile) + Welcome text */}
-      <div className="flex items-center gap-3">
+      <div className='flex items-center gap-3'>
         <button
           onClick={toggle}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-text-secondary hover:bg-white hover:text-text-primary transition-colors lg:hidden"
-          aria-label="Toggle navigation menu"
+          className='flex h-10 w-10 items-center justify-center rounded-xl text-text-secondary hover:bg-white hover:text-text-primary transition-colors lg:hidden'
+          aria-label='Toggle navigation menu'
         >
-          <MenuIcon className="h-6 w-6" />
+          <MenuIcon className='h-6 w-6' />
         </button>
 
         <div>
-          <h2 className="text-lg font-bold text-text-primary sm:text-xl">
-            Welcome, Sharon
+          <h2 className='text-lg font-bold text-text-primary sm:text-xl'>
+            Welcome, {user?.full_name}
           </h2>
-          <p className="text-xs text-text-muted sm:text-sm">Have a nice day</p>
+          <p className='text-xs text-text-muted sm:text-sm'>Have a nice day</p>
         </div>
       </div>
 
       {/* Right: Notification bell + User profile */}
-      <div className="flex items-center gap-2 sm:gap-4">
+      <div className='flex items-center gap-2 sm:gap-4'>
         {/* Notification bell */}
-        <div ref={notificationRef} className="relative">
-          <button
+        <div ref={notificationRef} className='relative'>
+          {/* <button
             onClick={() => setShowNotifications((prev) => !prev)}
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl text-text-secondary transition-colors hover:bg-white hover:text-primary"
-            aria-label="View notifications"
+            className='relative flex h-10 w-10 items-center justify-center rounded-xl text-text-secondary transition-colors hover:bg-white hover:text-primary'
+            aria-label='View notifications'
             aria-expanded={showNotifications}
           >
-            <BellIcon className="h-5 w-5" />
+            <BellIcon className='h-5 w-5' />
             <Badge count={unreadCount} />
-          </button>
+          </button> */}
 
           {/* Notification dropdown */}
           {showNotifications && (
@@ -67,12 +72,19 @@ export function TopHeader() {
         </div>
 
         {/* User profile */}
-        <div className="flex items-center gap-2 cursor-pointer rounded-xl px-2 py-1.5 transition-colors hover:bg-white">
-          <Avatar src="/avatar.png" alt="Sharon" size="md" />
-          <span className="hidden text-sm font-semibold text-text-primary sm:block">
-            Sharon
+        <div
+          onClick={() => router.push("/setting")}
+          className='flex items-center gap-2 cursor-pointer rounded-xl px-2 py-1.5 transition-colors hover:bg-white'
+        >
+          <Avatar
+            src='/avatar.png'
+            alt={user?.full_name! || "Admin"}
+            size='md'
+          />
+          <span className='hidden text-sm font-semibold text-text-primary sm:block'>
+            {user?.full_name}
           </span>
-          <ChevronDownIcon className="hidden h-4 w-4 text-text-muted sm:block" />
+          <ChevronDownIcon className='hidden h-4 w-4 text-text-muted sm:block' />
         </div>
       </div>
     </header>

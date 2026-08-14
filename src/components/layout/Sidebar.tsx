@@ -1,11 +1,5 @@
 "use client";
 
-// =============================================================================
-// Sidebar — Dark navy sidebar with navigation items
-// Desktop: Fixed 220px sidebar
-// Mobile: Slide-in drawer with backdrop overlay
-// =============================================================================
-
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -86,7 +80,7 @@ export function Sidebar() {
       <aside
         ref={sidebarRef}
         className={`
-          fixed top-0 left-0 z-50 flex h-full w-[220px] flex-col bg-sidebar-bg
+          fixed top-0 left-0 z-50 flex h-full w-55 flex-col bg-sidebar-bg
           transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
           lg:sticky lg:translate-x-0
           ${isOpen || isDesktop ? "translate-x-0" : "-translate-x-full"}
