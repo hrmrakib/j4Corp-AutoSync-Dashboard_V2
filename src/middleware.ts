@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export default async function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   // Fetch current user (authentication token) from request cookies directly
   const token = request.cookies.get("token")?.value;
 
