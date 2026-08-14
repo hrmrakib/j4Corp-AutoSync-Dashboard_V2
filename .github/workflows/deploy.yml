@@ -47,6 +47,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || '22' }}
           script: |
+            set -e
             cd /opt/motorsports/frontend
             git config --global --add safe.directory /opt/motorsports/frontend
             git reset --hard
