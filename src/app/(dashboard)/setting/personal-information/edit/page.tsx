@@ -3,7 +3,6 @@
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,7 +45,7 @@ export default function PersonalInformationEditPage() {
         zip_code: user.zip_code || "",
         dob: user.dob ? String(user.dob).split("T")[0] : "", // ensure proper YYYY-MM-DD
       });
-      setProfileImage(user.profile_pic || "");
+      setProfileImage(user.profile_pic || user.profile_pic_url || "");
     }
   }, [profileResponse]);
 
@@ -138,12 +137,15 @@ export default function PersonalInformationEditPage() {
                     className='relative mb-4 cursor-pointer group'
                     onClick={handleImageClick}
                   >
-                    <div className='w-32 h-32 rounded-full overflow-hidden relative border-2 border-primary'>
-                      <Image
+                    <div className='w-32 h-32 rounded-full overflow-hidden relative border-2 border-primary bg-gray-100 flex items-center justify-center'>
+                      <img
                         src={displayImageSource}
                         alt='Profile'
-                        fill
-                        className='object-cover'
+                        className='w-full h-full object-cover'
+                        onError={(e) => {
+                          e.currentTarget.src = "/admin.jpg";
+                          e.currentTarget.onerror = null;
+                        }}
                       />
                     </div>
                     <div className='absolute bottom-0 right-0 bg-primary p-2 rounded-full text-white shadow-lg group-hover:scale-110 transition-transform'>

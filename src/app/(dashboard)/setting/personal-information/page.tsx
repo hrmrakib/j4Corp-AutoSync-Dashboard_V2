@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft, Edit } from "lucide-react";
 import { useGetProfileQuery } from "@/redux/features/setting/settingAPI";
 
@@ -48,12 +47,15 @@ export default function PersonalInformationPage() {
               <div className='flex flex-col md:flex-row gap-8 mb-6'>
                 {/* Profile Photo Section */}
                 <div className='w-full md:w-64 flex flex-col items-center border border-gray-600 rounded-md px-6 py-10'>
-                  <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3'>
-                    <Image
-                      src={profile?.profile_pic || "/admin.jpg"}
+                  <div className='w-32 h-32 rounded-full overflow-hidden relative mb-3 bg-gray-100 flex items-center justify-center'>
+                    <img
+                      src={profile?.profile_pic || profile?.profile_pic_url || "/admin.jpg"}
                       alt='Profile'
-                      fill
-                      className='object-cover'
+                      className='w-full h-full object-cover'
+                      onError={(e) => {
+                        e.currentTarget.src = "/admin.jpg";
+                        e.currentTarget.onerror = null;
+                      }}
                     />
                   </div>
                   <span className='text-base text-black uppercase'>
