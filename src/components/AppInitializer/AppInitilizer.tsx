@@ -33,8 +33,5 @@ export default function AppInitializer({
     }
   }, [data, token, dispatch]);
 
-  console.log({data})
-
-
   return children;
 }

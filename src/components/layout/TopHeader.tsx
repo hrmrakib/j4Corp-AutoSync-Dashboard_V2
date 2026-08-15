@@ -23,7 +23,6 @@ export function TopHeader() {
 
   const unreadCount = mockNotifications.filter((n) => !n.read).length;
   const { user } = useAuth();
-  console.log({ user });
 
   const closeNotifications = useCallback(() => {
     setShowNotifications(false);
