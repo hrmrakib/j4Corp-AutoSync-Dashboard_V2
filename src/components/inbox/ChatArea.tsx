@@ -9,6 +9,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { SearchIcon } from "@/components/ui/Icons";
 import { useClientChat } from "@/provider/WebSocketProvider";
 import { useCreateRoomMutation, useGetChatRoomsQuery } from "@/redux/features/messages/messagesAPI";
+import { useGetProfileQuery } from "@/redux/features/setting/settingAPI";
 import { useToast } from "@/context/ToastContext";
 
 interface ChatAreaProps {
@@ -28,6 +29,8 @@ export function ChatArea({ contactId, className = "", onBack }: ChatAreaProps) {
   const [createRoom] = useCreateRoomMutation();
   const { addToast } = useToast();
   const { data: roomsData, isLoading: isRoomsLoading } = useGetChatRoomsQuery(undefined);
+  const { data: profileData } = useGetProfileQuery({});
+  const currentUserId = profileData?.data?.user_id;
 
   const activeContactIdRef = useRef<string | null>(null);
   const connectedRoomIdRef = useRef<string | number | null>(null);
@@ -215,7 +218,13 @@ export function ChatArea({ contactId, className = "", onBack }: ChatAreaProps) {
         )}
 
         {messages.map((msg, idx) => {
-          const isMe = msg.sender_type === "client" || msg.sender === "client" || msg.isOptimistic;
+          const isMe = 
+            msg.isOptimistic || 
+            (currentUserId && String(msg.sender_id) === String(currentUserId)) || 
+            (!currentUserId && msg.sender_type === "admin") ||
+            msg.sender_type === "client" || 
+            msg.sender === "client";
+            
           return (
             <div
               key={msg.id || `msg-${idx}`}

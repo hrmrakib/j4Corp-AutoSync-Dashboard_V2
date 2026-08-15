@@ -123,23 +123,12 @@ export function RecentUsersTable({ users, searchQuery, onSearchChange }: RecentU
                       <div className="flex items-center gap-2">
                         <IconButton
                           label={`View info for ${user.full_name || user.first_name}`}
-                          onClick={() =>
-                            addToast(
-                              `Viewing details for ${user.full_name || user.first_name}`,
-                              "info"
-                            )
-                          }
-                        >
-                          <InfoIcon className="h-4 w-4" />
-                        </IconButton>
-                        <IconButton
-                          label={`View registered units for ${user.full_name || user.first_name}`}
                           onClick={() => {
                             setSelectedUser(user);
                             setShowUnitsModal(true);
                           }}
                         >
-                          <MotorcycleIcon className="h-4 w-4" />
+                          <InfoIcon className="h-4 w-4" />
                         </IconButton>
                       </div>
                     </td>
