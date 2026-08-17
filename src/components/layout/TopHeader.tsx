@@ -14,12 +14,16 @@ import { useClickOutside } from "@/hooks/useClickOutside";
 import { mockNotifications } from "@/data/mock-data";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useGetProfileQuery } from "@/redux/features/setting/settingAPI";
 
 export function TopHeader() {
   const router = useRouter();
   const { toggle } = useSidebar();
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const { data: profileData, isLoading } = useGetProfileQuery({});
+
+  const profile = profileData?.data;
 
   const unreadCount = mockNotifications.filter((n) => !n.read).length;
   const { user } = useAuth();
@@ -76,7 +80,9 @@ export function TopHeader() {
           className='flex items-center gap-2 cursor-pointer rounded-xl px-2 py-1.5 transition-colors hover:bg-white'
         >
           <Avatar
-            src='/avatar.png'
+            src={
+              profile?.profile_pic || profile?.profile_pic_url || "/admin.jpg"
+            }
             alt={user?.full_name! || "Admin"}
             size='md'
           />
